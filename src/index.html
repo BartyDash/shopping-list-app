@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Lista zakupów</title>
     <link href="./index.css" rel="stylesheet">
 </head>
 
-<body>
-    <h1 class="text-3xl font-bold underline">
-        Hello world!
-    </h1>
+<body class="bg-gray-100">
+    <main class="w-full flex flex-col justify-center p-4 gap-3">
+        <img class="max-w-60 m-auto" src="./images/cute-cat-noodles.gif" alt="cute cat">
+        <input class="input-field--js bg-zinc-200 text-yellow-950 p-3.5 rounded-lg text-xl text-center" type="text" name="input-field" placeholder="Chleb">
+        <button class="add-button--js bg-rose-700 text-white p-3.5 rounded-lg text-xl text-center">Dodaj do koszyka</button>
+    </main>
+
+    <script type="module" src="./main.js"></script>
 </body>
 
 </html>
