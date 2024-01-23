@@ -40,6 +40,6 @@ function clearShoppingList() {
 }
 
 function appendItemShoppingList(inputValue) {
-    let item = `<li>${inputValue}</li>`;
+    let item = `<li class="bg-stone-100 p-3.5 rounded-lg text-xl text-center shadow grow">${inputValue}</li>`;
     shoppingList.insertAdjacentHTML('beforeend', item);
 }
