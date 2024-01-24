@@ -22,12 +22,16 @@ addButton.addEventListener('click', () => {
 });
 
 onValue(shoppingListDatabase, (snapshot) => {
-    let itemsArray = Object.entries(snapshot.val());
+    if (snapshot.exists()) {
+        let itemsArray = Object.entries(snapshot.val());
 
-    clearShoppingList();
-    
-    for (let item of itemsArray) {
-        appendItemShoppingList(item);
+        clearShoppingList();
+        
+        for (let item of itemsArray) {
+            appendItemShoppingList(item);
+        }
+    } else {
+        shoppingList.innerHTML = 'Co tak tu pusto?... zgłodniałem🤤';
     }
 });
 
