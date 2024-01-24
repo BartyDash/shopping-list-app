@@ -15,8 +15,11 @@ const shoppingList = document.querySelector('.shopping-list--js');
 
 addButton.addEventListener('click', () => {
     let inputValue = inputField.value;
+    const regex = /[a-zA-Z0-9]/;
 
-    push(shoppingListDatabase, inputValue);
+    if (regex.test(inputValue)) {
+        push(shoppingListDatabase, inputValue);
+    }
 
     clearInputField();
 });
@@ -49,7 +52,7 @@ function appendItemShoppingList(item) {
 
     let newItem = document.createElement('li');
     newItem.textContent = itemValue;
-    newItem.classList = 'bg-amber-50 p-3.5 rounded-lg text-xl text-center shadow grow';
+    newItem.classList = 'bg-amber-50 text-yellow-950 p-3.5 rounded-lg text-xl text-center shadow grow hover:bg-amber-100';
 
     newItem.addEventListener('click', () => {
         let exactLocationItemInDb = ref(database, `shoppingList/${itemId}`);
