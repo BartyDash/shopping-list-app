@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, onValue, push, ref } from 'firebase/database';
+import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
 
 const firebaseSettings = {
     databaseURL: 'https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app/'
@@ -22,12 +22,12 @@ addButton.addEventListener('click', () => {
 });
 
 onValue(shoppingListDatabase, (snapshot) => {
-    let itemsArray = Object.values(snapshot.val());
+    let itemsArray = Object.entries(snapshot.val());
 
     clearShoppingList();
     
-    for (let element of itemsArray) {
-        appendItemShoppingList(element);
+    for (let item of itemsArray) {
+        appendItemShoppingList(item);
     }
 });
 
@@ -39,7 +39,18 @@ function clearShoppingList() {
     shoppingList.innerHTML = '';
 }
 
-function appendItemShoppingList(inputValue) {
-    let item = `<li class="bg-stone-100 p-3.5 rounded-lg text-xl text-center shadow grow">${inputValue}</li>`;
-    shoppingList.insertAdjacentHTML('beforeend', item);
+function appendItemShoppingList(item) {
+    let itemId = item[0];
+    let itemValue = item[1];
+
+    let newItem = document.createElement('li');
+    newItem.textContent = itemValue;
+    newItem.classList = 'bg-amber-50 p-3.5 rounded-lg text-xl text-center shadow grow';
+
+    newItem.addEventListener('click', () => {
+        let exactLocationItemInDb = ref(database, `shoppingList/${itemId}`);
+        remove(exactLocationItemInDb);
+    });
+
+    shoppingList.append(newItem);
 }
