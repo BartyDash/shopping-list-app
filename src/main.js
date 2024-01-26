@@ -30,9 +30,9 @@ const instance = typeahead({
     },
     onSubmit: (e, selectedSuggestion) => {
         const query = e.target.value;
-        console.log(query);
         pushToDatabase(query);
         clearInputField();
+        inputField.blur();
     }
 });
 
@@ -61,8 +61,6 @@ onValue(autocompleteItemsDatabase, (snapshot) => {
         let itemsArray = Object.entries(snapshot.val());
 
         getAutocompleteItemsToArray(itemsArray);
-
-        console.log('aktualizacja danych');
     } else {
         console.log('snapshot not exist');
     }
@@ -109,13 +107,13 @@ function appendItemShoppingList(item) {
 }
 
 function getAutocompleteItemsToArray(itemsArray) {
-    
+    autocompleteItems.length = 0;
     for (let item of itemsArray) {
         autocompleteItems.push(item[1]);
     }
-    // instance.reset(); <--- not working :(
+    // instance.reset(); <--- not working :( - array.length=0 working good instead
+    
     instance.addToIndex(autocompleteItems);
-    console.log(autocompleteItems);
 }
 
 function pushAutocompleteItemToDatabase(item) {
