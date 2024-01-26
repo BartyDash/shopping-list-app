@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
+import { get, getDatabase, onValue, push, ref, remove } from 'firebase/database';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -15,9 +15,9 @@ const inputField = document.querySelector('.input-field--js');
 const addButton = document.querySelector('.add-button--js');
 const shoppingList = document.querySelector('.shopping-list--js');
 
-const autocompleteItems = ['Czekolada', 'Chleb', 'Masło', 'Mango', 'Kiwi', 'Jakiś inny owoc'];
+const autocompleteItems = [];
 
-typeahead({
+const instance = typeahead({
     input: inputField,
     source: {
         local: autocompleteItems,
@@ -35,7 +35,6 @@ typeahead({
         clearInputField();
     }
 });
-console.log(autocompleteItems);
 
 addButton.addEventListener('click', () => {
     pushToDatabase(inputField.value);
@@ -54,6 +53,18 @@ onValue(shoppingListDatabase, (snapshot) => {
         }
     } else {
         shoppingList.innerHTML = 'Co tak tu pusto?... zgłodniałem🤤';
+    }
+});
+
+onValue(autocompleteItemsDatabase, (snapshot) => {
+    if (snapshot.exists()) {
+        let itemsArray = Object.entries(snapshot.val());
+
+        getAutocompleteItemsToArray(itemsArray);
+
+        console.log('aktualizacja danych');
+    } else {
+        console.log('snapshot not exist');
     }
 });
 
@@ -87,4 +98,14 @@ function appendItemShoppingList(item) {
     });
 
     shoppingList.append(newItem);
+}
+
+function getAutocompleteItemsToArray(itemsArray) {
+    
+    for (let item of itemsArray) {
+        autocompleteItems.push(item[1]);
+    }
+    instance.reset();
+    instance.addToIndex(autocompleteItems);
+    console.log(autocompleteItems);
 }
