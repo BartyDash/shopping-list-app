@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { get, getDatabase, onValue, push, ref, remove } from 'firebase/database';
+import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -80,7 +80,15 @@ function pushToDatabase(inputValue) {
     const regex = /[a-zA-Z0-9]/;
 
     if (regex.test(inputValue)) {
-        push(shoppingListDatabase, inputValue);
+        push(shoppingListDatabase, changeFirstLetterUpperCase(inputValue));
+
+        let isTheSame = autocompleteItems.some((element) => {
+            return element.toLowerCase() === inputValue.toLowerCase();
+        });
+
+        if (isTheSame == false) {
+            pushAutocompleteItemToDatabase(inputValue);
+        }
     }
 }
 
@@ -105,7 +113,15 @@ function getAutocompleteItemsToArray(itemsArray) {
     for (let item of itemsArray) {
         autocompleteItems.push(item[1]);
     }
-    instance.reset();
+    // instance.reset(); <--- not working :(
     instance.addToIndex(autocompleteItems);
     console.log(autocompleteItems);
+}
+
+function pushAutocompleteItemToDatabase(item) {
+    push(autocompleteItemsDatabase, changeFirstLetterUpperCase(item));
+}
+
+function changeFirstLetterUpperCase(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
