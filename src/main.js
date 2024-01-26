@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
+import typeahead from 'typeahead-standalone';
+import 'typeahead-standalone/dist/basic.css';
 
 const firebaseSettings = {
     databaseURL: 'https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app/'
@@ -8,18 +10,33 @@ const firebaseSettings = {
 const app = initializeApp(firebaseSettings);
 const database = getDatabase(app);
 const shoppingListDatabase = ref(database, 'shoppingList');
+const autocompleteItemsDatabase = ref(database, 'autocompleteItems');
 
 const inputField = document.querySelector('.input-field--js');
 const addButton = document.querySelector('.add-button--js');
 const shoppingList = document.querySelector('.shopping-list--js');
 
-addButton.addEventListener('click', () => {
-    let inputValue = inputField.value;
-    const regex = /[a-zA-Z0-9]/;
+const autocompleteItems = ['Czekolada', 'Chleb', 'Masło', 'Mango', 'Kiwi', 'Jakiś inny owoc'];
 
-    if (regex.test(inputValue)) {
-        push(shoppingListDatabase, inputValue);
+typeahead({
+    input: inputField,
+    source: {
+        local: autocompleteItems,
+    },
+    highlight: true,
+    hint: false,
+    diacritics: true,
+    onSubmit: (e, selectedSuggestion) => {
+        const query = e.target.value;
+        console.log(query);
+        pushToDatabase(query);
+        clearInputField();
     }
+});
+console.log(autocompleteItems);
+
+addButton.addEventListener('click', () => {
+    pushToDatabase(inputField.value);
 
     clearInputField();
 });
@@ -44,6 +61,14 @@ function clearInputField() {
 
 function clearShoppingList() {
     shoppingList.innerHTML = '';
+}
+
+function pushToDatabase(inputValue) {
+    const regex = /[a-zA-Z0-9]/;
+
+    if (regex.test(inputValue)) {
+        push(shoppingListDatabase, inputValue);
+    }
 }
 
 function appendItemShoppingList(item) {
