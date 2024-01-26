@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
 import typeahead from 'typeahead-standalone';
-import 'typeahead-standalone/dist/basic.css';
 
 const firebaseSettings = {
     databaseURL: 'https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app/'
@@ -26,6 +25,9 @@ typeahead({
     highlight: true,
     hint: false,
     diacritics: true,
+    classNames : {
+        wrapper : 'bg-zinc-200 text-yellow-950 rounded-lg text-xl text-center w-full max-w-lg',
+    },
     onSubmit: (e, selectedSuggestion) => {
         const query = e.target.value;
         console.log(query);
