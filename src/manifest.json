@@ -1,7 +1,7 @@
 {
   "name": "Cat Shopping List",
   "short_name": "Shopping List",
-  "theme_color": "##be123c",
+  "theme_color": "#be123c",
   "background_color": "#f3f4f6",
   "display": "standalone",
   "orientation": "portrait",
