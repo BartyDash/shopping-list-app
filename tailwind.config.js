@@ -16,8 +16,8 @@ module.exports = {
           light:'#fcebbb',
           dark: '#fad878'
         },
-        'carolina-blue': '#87bcdeff',
-        charcoal: '#2d4654ff'
+        'carolina-blue': '#87bcde',
+        charcoal: '#2d4654'
       },
       fontFamily: {
         'caveat_brush': ['Caveat Brush', 'cursive'],
