@@ -96,7 +96,7 @@ function appendItemShoppingList(item) {
 
     let newItem = document.createElement('li');
     newItem.textContent = itemValue;
-    newItem.classList = 'bg-amber-50 text-yellow-950 p-3.5 rounded-lg text-xl text-center shadow grow hover:bg-amber-100';
+    newItem.classList = 'bg-yellow-soup-light text-brown-derby p-3.5 rounded-lg text-xl text-center shadow grow transition md:hover:scale-105 md:hover:bg-yellow-soup-dark active:scale-95 md:active:scale-95 active:bg-yellow-soup-dark';
 
     newItem.addEventListener('click', () => {
         let exactLocationItemInDb = ref(database, `shoppingList/${itemId}`);

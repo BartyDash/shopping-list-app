@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel src/*.html --no-cache",
-    "build": "parcel build src/*.html"
+    "build": "parcel build src/*.html --public-url=https://cute-cat-shopping-list.netlify.app/"
   },
   "keywords": [],
   "author": "",
