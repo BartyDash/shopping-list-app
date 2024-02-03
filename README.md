@@ -7,7 +7,7 @@
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/BartyDash/hydrapp.git
+    git clone https://github.com/BartyDash/shopping-list-app.git
     ```
 2. Go to the project directory
 
