@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -137,6 +137,51 @@ function changeFirstLetterUpperCase(string) {
 
 //auth code functions below
 
+const loginButton = document.getElementById('loginButton');
+const registerButton = document.getElementById('registerButton');
+
+// loginButton.addEventListener('click', login);
+registerButton.addEventListener('click', register);
+
 function register() {
-    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    //check input fields format
+    if (isEmailCorrectFormat(email) == false || isPasswordCorrectFormat(password) == false) {
+        alert('Twój email lub hasło są niepoprawne!');
+        return;
+    }
+
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        //signed up
+        const user = userCredential.user;
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        alert(errorMessage + '\n' + errorCode);
+    });
+}
+
+function isEmailCorrectFormat(email) {
+    const regex = /^[^@]+@\w+(\.\w+)+\w$/;
+    if (regex.test(email) == true) {
+        //email is good :D
+        return true;
+    } else {
+        //email isn't good :(
+        return false;
+    }
+}
+
+function isPasswordCorrectFormat(password) {
+    if (password.length < 6) {
+        return false;
+    } else {
+        return true;
+    }
 }
