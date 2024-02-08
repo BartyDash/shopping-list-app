@@ -27,6 +27,14 @@
         <button class="add-button--js bg-redbowl-light text-white p-3.5 rounded-lg text-xl text-center w-full max-w-lg transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark">Dodaj do koszyka</button>
         <ul class="shopping-list--js flex flex-wrap gap-3">
         </ul>
+        <div class="flex flex-col gap-3">
+            <input class="p-3.5 rounded-lg" type="email" id="email" placeholder="twójmail@mail.com">
+            <input class="p-3.5 rounded-lg" type="password" id="password" placeholder="Hasło">
+            <div class="flex flex-row justify-between">
+                <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center" onclick="login()">Zaloguj</button>
+                <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center" onclick="register()">Zarejestruj</button>
+            </div>
+        </div>
     </main>
 
     <script type="module" src="./main.js"></script>

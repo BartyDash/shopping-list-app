@@ -1,12 +1,23 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
     databaseURL: 'https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app/'
 };
 
-const app = initializeApp(firebaseSettings);
+const firebaseConfig = {
+    apiKey: "AIzaSyDgJtVqeFX3rLoIk5OI1A7Hpt4gR6ES9d8",
+    authDomain: "shopping-list-app-9a087.firebaseapp.com",
+    databaseURL: "https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "shopping-list-app-9a087",
+    storageBucket: "shopping-list-app-9a087.appspot.com",
+    messagingSenderId: "301697009995",
+    appId: "1:301697009995:web:6341f92cc00fce57d140ce"
+  };
+
+const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const shoppingListDatabase = ref(database, 'shoppingList');
 const autocompleteItemsDatabase = ref(database, 'autocompleteItems');
@@ -122,4 +133,10 @@ function pushAutocompleteItemToDatabase(item) {
 
 function changeFirstLetterUpperCase(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+//auth code functions below
+
+function register() {
+    
 }
