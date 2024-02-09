@@ -158,8 +158,19 @@ function register() {
     .then((userCredential) => {
         //signed up
         const user = userCredential.user;
-    })
-    .catch((error) => {
+        //add user to database
+        const databaseRef = ref(database, 'users');
+
+        const userData = {
+            email: email,
+            lastLogin: Date.now()
+        }
+
+        // databaseRef.child('users/' + user.uid).set(userData);
+        push(databaseRef, userData);
+
+        alert('Zarejestrowano!');
+    }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
 
