@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, onValue, push, ref, remove } from 'firebase/database';
+import { child, getDatabase, onValue, push, ref, remove, set } from 'firebase/database';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
@@ -153,7 +153,7 @@ function register() {
         return;
     }
 
-    const auth = getAuth();
+    const auth = getAuth(app);
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         //signed up
@@ -166,8 +166,8 @@ function register() {
             lastLogin: Date.now()
         }
 
-        // databaseRef.child('users/' + user.uid).set(userData);
-        push(databaseRef, userData);
+        const userRef = child(databaseRef, user.uid);
+        set(userRef, userData);
 
         alert('Zarejestrowano!');
     }).catch((error) => {
