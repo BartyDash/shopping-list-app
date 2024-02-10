@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { child, getDatabase, onValue, push, ref, remove, set, update } from 'firebase/database';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -143,6 +143,29 @@ const registerButton = document.getElementById('registerButton');
 loginButton.addEventListener('click', login);
 registerButton.addEventListener('click', register);
 
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        const uid = user.uid;
+        console.log(`Sesja dalej aktywna. Zalogowany jako: ${uid}`);
+
+        const userData = {
+            lastLogin: Date.now()
+        }
+        updateUserData(user, userData);
+
+    } else {
+        console.log('Sesja wygasła. Zaloguj się ponownie lub zarejetruj.');
+    }
+});
+
+function updateUserData(user, userData) {
+    const databaseRef = ref(database, 'users');
+    const userRef = child(databaseRef, user.uid);
+
+    update(userRef, userData);
+}
+
 function register() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -193,15 +216,11 @@ function login() {
     .then((userCredential) => {
         //signed up
         const user = userCredential.user;
-        //add user to database
-        const databaseRef = ref(database, 'users');
-
         const userData = {
             lastLogin: Date.now()
         }
 
-        const userRef = child(databaseRef, user.uid);
-        update(userRef, userData);
+        updateUserData(user, userData);
 
         alert('Zalogowano!');
     }).catch((error) => {
