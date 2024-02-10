@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { child, getDatabase, onValue, push, ref, remove, set } from 'firebase/database';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { child, getDatabase, onValue, push, ref, remove, set, update } from 'firebase/database';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -140,7 +140,7 @@ function changeFirstLetterUpperCase(string) {
 const loginButton = document.getElementById('loginButton');
 const registerButton = document.getElementById('registerButton');
 
-// loginButton.addEventListener('click', login);
+loginButton.addEventListener('click', login);
 registerButton.addEventListener('click', register);
 
 function register() {
@@ -170,6 +170,40 @@ function register() {
         set(userRef, userData);
 
         alert('Zarejestrowano!');
+    }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        alert(errorMessage + '\n' + errorCode);
+    });
+}
+
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    //check input fields format
+    if (isEmailCorrectFormat(email) == false || isPasswordCorrectFormat(password) == false) {
+        alert('Twój email lub hasło są niepoprawne!');
+        return;
+    }
+
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        //signed up
+        const user = userCredential.user;
+        //add user to database
+        const databaseRef = ref(database, 'users');
+
+        const userData = {
+            lastLogin: Date.now()
+        }
+
+        const userRef = child(databaseRef, user.uid);
+        update(userRef, userData);
+
+        alert('Zalogowano!');
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
