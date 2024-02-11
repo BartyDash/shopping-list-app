@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { child, getDatabase, onValue, push, ref, remove, set, update } from 'firebase/database';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
 const firebaseSettings = {
@@ -139,9 +139,11 @@ function changeFirstLetterUpperCase(string) {
 
 const loginButton = document.getElementById('loginButton');
 const registerButton = document.getElementById('registerButton');
+const logoutButton = document.getElementById('logoutButton');
 
 loginButton.addEventListener('click', login);
 registerButton.addEventListener('click', register);
+logoutButton.addEventListener('click', logout);
 
 const auth = getAuth();
 onAuthStateChanged(auth, (user) => {
@@ -228,6 +230,19 @@ function login() {
         const errorMessage = error.message;
 
         alert(errorMessage + '\n' + errorCode);
+    });
+}
+
+function logout() {
+    signOut(auth)
+    .then(() => {
+        //wait for button animation has ended
+        logoutButton.addEventListener('transitionend', () => {
+            logoutButton.classList.toggle('hidden');
+            console.log('Wylogowano!');
+        });
+    }).catch((error) => {
+        console.log(error);
     });
 }
 
