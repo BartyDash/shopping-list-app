@@ -3,10 +3,6 @@ import { child, getDatabase, onValue, push, ref, remove, set, update } from 'fir
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import typeahead from 'typeahead-standalone';
 
-const firebaseSettings = {
-    databaseURL: 'https://shopping-list-app-9a087-default-rtdb.europe-west1.firebasedatabase.app/'
-};
-
 const firebaseConfig = {
     apiKey: "AIzaSyDgJtVqeFX3rLoIk5OI1A7Hpt4gR6ES9d8",
     authDomain: "shopping-list-app-9a087.firebaseapp.com",
@@ -15,7 +11,7 @@ const firebaseConfig = {
     storageBucket: "shopping-list-app-9a087.appspot.com",
     messagingSenderId: "301697009995",
     appId: "1:301697009995:web:6341f92cc00fce57d140ce"
-  };
+};
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
@@ -25,8 +21,56 @@ const autocompleteItemsDatabase = ref(database, 'autocompleteItems');
 const inputField = document.querySelector('.input-field--js');
 const addButton = document.querySelector('.add-button--js');
 const shoppingList = document.querySelector('.shopping-list--js');
+const shoppingContainer = document.querySelector('.shopping-container--js');
+const loginContainer = document.querySelector('.login-container--js');
 
 const autocompleteItems = [];
+
+//auth code functions below
+
+const loginButton = document.getElementById('loginButton');
+const registerButton = document.getElementById('registerButton');
+const logoutButton = document.getElementById('logoutButton');
+
+loginButton.addEventListener('click', login);
+registerButton.addEventListener('click', register);
+logoutButton.addEventListener('click', logout);
+
+const auth = getAuth(app);
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        if(shoppingContainer.classList.contains('hidden')) {
+            shoppingContainer.classList.remove('hidden');
+        }
+        if(loginContainer.classList.contains('hidden') == false) {
+            loginContainer.classList.add('hidden');
+        }
+        if(logoutButton.classList.contains('hidden')) {
+            logoutButton.classList.remove('hidden');
+        }
+
+        const uid = user.uid;
+        console.log(`Sesja dalej aktywna. Zalogowany jako: ${uid}`);
+
+        const userData = {
+            lastLogin: Date.now()
+        }
+        updateUserData(user, userData);
+
+    } else {
+        if(shoppingContainer.classList.contains('hidden') == false) {
+            shoppingContainer.classList.add('hidden');
+        }
+        if(loginContainer.classList.contains('hidden')) {
+            loginContainer.classList.remove('hidden');
+        }
+        if(logoutButton.classList.contains('hidden') == false) {
+            logoutButton.classList.add('hidden');
+        }
+
+        console.log('Sesja wygasła. Zaloguj się ponownie lub zarejetruj.');
+    }
+});
 
 const instance = typeahead({
     input: inputField,
@@ -50,7 +94,7 @@ const instance = typeahead({
 addButton.addEventListener('click', () => {
     pushToDatabase(inputField.value);
 
-    clearInputField();
+    clearInputField(inputField);
 });
 
 onValue(shoppingListDatabase, (snapshot) => {
@@ -77,7 +121,7 @@ onValue(autocompleteItemsDatabase, (snapshot) => {
     }
 });
 
-function clearInputField() {
+function clearInputField(inputField) {
     inputField.value = '';
 }
 
@@ -135,31 +179,7 @@ function changeFirstLetterUpperCase(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-//auth code functions below
 
-const loginButton = document.getElementById('loginButton');
-const registerButton = document.getElementById('registerButton');
-const logoutButton = document.getElementById('logoutButton');
-
-loginButton.addEventListener('click', login);
-registerButton.addEventListener('click', register);
-logoutButton.addEventListener('click', logout);
-
-const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        const uid = user.uid;
-        console.log(`Sesja dalej aktywna. Zalogowany jako: ${uid}`);
-
-        const userData = {
-            lastLogin: Date.now()
-        }
-        updateUserData(user, userData);
-
-    } else {
-        console.log('Sesja wygasła. Zaloguj się ponownie lub zarejetruj.');
-    }
-});
 
 function updateUserData(user, userData) {
     const databaseRef = ref(database, 'users');
@@ -169,17 +189,22 @@ function updateUserData(user, userData) {
 }
 
 function register() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email');
+    const emailValue = email.value;
+    const password = document.getElementById('password');
+    const passwordValue = password.value;
+
+    clearInputField(email);
+    clearInputField(password);
 
     //check input fields format
-    if (isEmailCorrectFormat(email) == false || isPasswordCorrectFormat(password) == false) {
+    if (isEmailCorrectFormat(emailValue) == false || isPasswordCorrectFormat(passwordValue) == false) {
         alert('Twój email lub hasło są niepoprawne!');
         return;
     }
 
     const auth = getAuth(app);
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, emailValue, passwordValue)
     .then((userCredential) => {
         //signed up
         const user = userCredential.user;
@@ -187,7 +212,7 @@ function register() {
         const databaseRef = ref(database, 'users');
 
         const userData = {
-            email: email,
+            email: emailValue,
             lastLogin: Date.now()
         }
 
@@ -198,23 +223,30 @@ function register() {
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        if (errorCode === 'auth/email-already-in-use') {
+            console.log('Email już istnieje!');
+        }
 
-        alert(errorMessage + '\n' + errorCode);
+        console.log(errorMessage + '\n' + errorCode);
     });
 }
 
 function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email');
+    const emailValue = email.value;
+    const password = document.getElementById('password');
+    const passwordValue = password.value;
+
+    clearInputField(email);
+    clearInputField(password);
 
     //check input fields format
-    if (isEmailCorrectFormat(email) == false || isPasswordCorrectFormat(password) == false) {
+    if (isEmailCorrectFormat(emailValue) == false || isPasswordCorrectFormat(passwordValue) == false) {
         alert('Twój email lub hasło są niepoprawne!');
         return;
     }
 
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, emailValue, passwordValue)
     .then((userCredential) => {
         //signed up
         const user = userCredential.user;
@@ -224,12 +256,15 @@ function login() {
 
         updateUserData(user, userData);
 
-        alert('Zalogowano!');
+        console.log('Zalogowano!');
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        alert(errorMessage + '\n' + errorCode);
+        console.log(errorMessage + '\n' + errorCode);
+        if (errorCode == 'auth/invalid-credential') {
+            console.log('Złe dane logowania!');
+        }
     });
 }
 
