@@ -15,8 +15,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
-const shoppingListDatabase = ref(database, 'shoppingList');
-const autocompleteItemsDatabase = ref(database, 'autocompleteItems');
 
 const inputField = document.querySelector('.input-field--js');
 const addButton = document.querySelector('.add-button--js');
@@ -37,6 +35,16 @@ registerButton.addEventListener('click', register);
 logoutButton.addEventListener('click', logout);
 
 const auth = getAuth(app);
+const currentUser = auth.currentUser;
+
+function isLogged() {
+    if (auth.currentUser !== null) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 onAuthStateChanged(auth, (user) => {
     if (user) {
         if(shoppingContainer.classList.contains('hidden')) {
@@ -51,6 +59,34 @@ onAuthStateChanged(auth, (user) => {
 
         const uid = user.uid;
         console.log(`Sesja dalej aktywna. Zalogowany jako: ${uid}`);
+
+
+        const shoppingListDatabase = ref(database, 'users/' + uid + '/shoppingList');
+        const autocompleteItemsDatabase = ref(database, 'users/' + uid + '/autocompleteItems');
+        
+        onValue(shoppingListDatabase, (snapshot) => {
+            if (snapshot.exists()) {
+                let itemsArray = Object.entries(snapshot.val());
+        
+                clearShoppingList();
+                
+                for (let item of itemsArray) {
+                    appendItemShoppingList(item);
+                }
+            } else {
+                shoppingList.innerHTML = 'Co tak tu pusto?... zgłodniałem🤤';
+            }
+        });
+        
+        onValue(autocompleteItemsDatabase, (snapshot) => {
+            if (snapshot.exists()) {
+                let itemsArray = Object.entries(snapshot.val());
+        
+                getAutocompleteItemsToArray(itemsArray);
+            } else {
+                console.log('snapshot not exist');
+            }
+        });
 
         const userData = {
             lastLogin: Date.now()
@@ -97,30 +133,6 @@ addButton.addEventListener('click', () => {
     clearInputField(inputField);
 });
 
-onValue(shoppingListDatabase, (snapshot) => {
-    if (snapshot.exists()) {
-        let itemsArray = Object.entries(snapshot.val());
-
-        clearShoppingList();
-        
-        for (let item of itemsArray) {
-            appendItemShoppingList(item);
-        }
-    } else {
-        shoppingList.innerHTML = 'Co tak tu pusto?... zgłodniałem🤤';
-    }
-});
-
-onValue(autocompleteItemsDatabase, (snapshot) => {
-    if (snapshot.exists()) {
-        let itemsArray = Object.entries(snapshot.val());
-
-        getAutocompleteItemsToArray(itemsArray);
-    } else {
-        console.log('snapshot not exist');
-    }
-});
-
 function clearInputField(inputField) {
     inputField.value = '';
 }
@@ -131,6 +143,8 @@ function clearShoppingList() {
 
 function pushToDatabase(inputValue) {
     const regex = /[a-zA-Z0-9]/;
+
+    const shoppingListDatabase = ref(database, 'users/' + auth.currentUser.uid + '/shoppingList');
 
     if (regex.test(inputValue)) {
         push(shoppingListDatabase, changeFirstLetterUpperCase(inputValue));
@@ -172,6 +186,7 @@ function getAutocompleteItemsToArray(itemsArray) {
 }
 
 function pushAutocompleteItemToDatabase(item) {
+    const autocompleteItemsDatabase = ref(database, 'users/' + auth.currentUser.uid + '/autocompleteItems');
     push(autocompleteItemsDatabase, changeFirstLetterUpperCase(item));
 }
 
@@ -219,7 +234,7 @@ function register() {
         const userRef = child(databaseRef, user.uid);
         set(userRef, userData);
 
-        alert('Zarejestrowano!');
+        console.log('Zarejestrowano!');
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
