@@ -122,7 +122,7 @@ const instance = typeahead({
     onSubmit: (e, selectedSuggestion) => {
         const query = e.target.value;
         pushToDatabase(query);
-        clearInputField();
+        clearInputField(inputField);
         inputField.blur();
     }
 });
@@ -168,7 +168,7 @@ function appendItemShoppingList(item) {
     newItem.classList = 'bg-yellow-soup-light text-brown-derby p-3.5 rounded-lg text-xl text-center shadow grow transition md:hover:scale-105 md:hover:bg-yellow-soup-dark active:scale-95 md:active:scale-95 active:bg-yellow-soup-dark';
 
     newItem.addEventListener('click', () => {
-        let exactLocationItemInDb = ref(database, `shoppingList/${itemId}`);
+        let exactLocationItemInDb = ref(database, `users/${auth.currentUser.uid}/shoppingList/${itemId}`);
         remove(exactLocationItemInDb);
     });
 
