@@ -32,7 +32,8 @@
         </div>
         <div class="login-container--js flex flex-col gap-3">
             <input class="p-3.5 rounded-lg" type="email" id="email" placeholder="twójmail@mail.com" autocomplete="email">
-            <input class="p-3.5 rounded-lg" type="password" id="password" placeholder="Hasło" autocomplete="current-password">
+            <input class="p-3.5 rounded-lg" type="password" id="password" placeholder="Hasło [min.6 znaków]" autocomplete="current-password">
+            <p class="error-message--js px-3.5 rounded-lg bg-red-200 border-2 border-red-400 text-red-700 hidden">Error</p>
             <div class="flex flex-row justify-between">
                 <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center" id="loginButton">Zaloguj</button>
                 <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center" id="registerButton">Zarejestruj</button>

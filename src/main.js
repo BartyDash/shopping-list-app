@@ -29,6 +29,7 @@ const autocompleteItems = [];
 const loginButton = document.getElementById('loginButton');
 const registerButton = document.getElementById('registerButton');
 const logoutButton = document.getElementById('logoutButton');
+const errorMessageContainer = document.querySelector('.error-message--js');
 
 loginButton.addEventListener('click', login);
 registerButton.addEventListener('click', register);
@@ -58,9 +59,6 @@ onAuthStateChanged(auth, (user) => {
         }
 
         const uid = user.uid;
-        console.log(`Sesja dalej aktywna. Zalogowany jako: ${uid}`);
-
-
         const shoppingListDatabase = ref(database, 'users/' + uid + '/shoppingList');
         const autocompleteItemsDatabase = ref(database, 'users/' + uid + '/autocompleteItems');
         
@@ -83,8 +81,6 @@ onAuthStateChanged(auth, (user) => {
                 let itemsArray = Object.entries(snapshot.val());
         
                 getAutocompleteItemsToArray(itemsArray);
-            } else {
-                console.log('snapshot not exist');
             }
         });
 
@@ -123,8 +119,6 @@ onAuthStateChanged(auth, (user) => {
         if(logoutButton.classList.contains('hidden') == false) {
             logoutButton.classList.add('hidden');
         }
-
-        console.log('Sesja wygasła. Zaloguj się ponownie lub zarejetruj.');
     }
 });
 
@@ -215,7 +209,7 @@ function register() {
 
     //check input fields format
     if (isEmailCorrectFormat(emailValue) == false || isPasswordCorrectFormat(passwordValue) == false) {
-        alert('Twój email lub hasło są niepoprawne!');
+        showLoginError('Złe dane logowania!');
         return;
     }
 
@@ -235,15 +229,17 @@ function register() {
         const userRef = child(databaseRef, user.uid);
         set(userRef, userData);
 
-        console.log('Zarejestrowano!');
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        if (errorCode === 'auth/email-already-in-use') {
-            console.log('Email już istnieje!');
+        switch (errorCode) {
+            case 'auth/email-already-in-use':
+                showLoginError('Mail już istnieje!');
+                break;
+            default:
+                showLoginError(errorCode);
+                break;
         }
-
-        console.log(errorMessage + '\n' + errorCode);
     });
 }
 
@@ -258,7 +254,7 @@ function login() {
 
     //check input fields format
     if (isEmailCorrectFormat(emailValue) == false || isPasswordCorrectFormat(passwordValue) == false) {
-        alert('Twój email lub hasło są niepoprawne!');
+        showLoginError('Złe dane logowania!');
         return;
     }
 
@@ -271,15 +267,17 @@ function login() {
         }
 
         updateUserData(user, userData);
-
-        console.log('Zalogowano!');
+        
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-
-        console.log(errorMessage + '\n' + errorCode);
+        
         if (errorCode == 'auth/invalid-credential') {
-            console.log('Złe dane logowania!');
+            showLoginError('Złe dane logowania!');
+        }
+        else {
+            showLoginError('Błąd!');
+            console.log(errorMessage + '\n' + errorCode);
         }
     });
 }
@@ -287,11 +285,7 @@ function login() {
 function logout() {
     signOut(auth)
     .then(() => {
-        //wait for button animation has ended
-        logoutButton.addEventListener('transitionend', () => {
-            logoutButton.classList.toggle('hidden');
-            console.log('Wylogowano!');
-        });
+        showLoginError('Wylogowano!');
     }).catch((error) => {
         console.log(error);
     });
@@ -314,4 +308,9 @@ function isPasswordCorrectFormat(password) {
     } else {
         return true;
     }
+}
+
+function showLoginError(error) {
+    errorMessageContainer.classList.remove('hidden');
+    errorMessageContainer.textContent = error;
 }
