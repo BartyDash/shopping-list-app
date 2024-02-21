@@ -22,11 +22,23 @@
 
 <body class="bg-gray-100 font-pangolin select-none">
     <main class="w-full flex flex-col items-center p-4 gap-3">
+        <button class="bg-redbowl-light fixed top-4 left-4 p-2 lg:p-3 rounded-lg transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark flex flex-row gap-1 items-center justify-center hidden" id="logoutButton"><img width="32" height="32" src="images/logout-icon.svg" alt="logout icon"><p class="max-lg:hidden text-white text-xl">Wyloguj</p></button>
         <img class="max-w-60 m-auto" src="./images/cute-cat-noodles.gif" alt="cute cat">
-        <input class="input-field--js bg-zinc-200 text-brown p-3.5 rounded-lg text-xl text-center w-full max-w-lg" type="text" name="input-field" placeholder="Chleb">
-        <button class="add-button--js bg-redbowl-light text-white p-3.5 rounded-lg text-xl text-center w-full max-w-lg transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark">Dodaj do koszyka</button>
-        <ul class="shopping-list--js flex flex-wrap gap-3">
-        </ul>
+        <div class="shopping-container--js w-full flex flex-col items-center gap-3 hidden">
+            <input class="input-field--js bg-zinc-200 text-brown p-3.5 rounded-lg text-xl text-center w-full max-w-lg" type="text" name="input-field" placeholder="Chleb">
+            <button class="add-button--js bg-redbowl-light text-white p-3.5 rounded-lg text-xl text-center w-full max-w-lg transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark">Dodaj do koszyka</button>
+            <ul class="shopping-list--js flex flex-wrap gap-3">
+            </ul>
+        </div>
+        <div class="login-container--js flex flex-col gap-3">
+            <input class="p-3.5 rounded-lg" type="email" id="email" placeholder="twójmail@mail.com" autocomplete="email">
+            <input class="p-3.5 rounded-lg" type="password" id="password" placeholder="Hasło [min.6 znaków]" autocomplete="current-password">
+            <p class="error-message--js px-3.5 rounded-lg bg-red-200 border-2 border-red-400 text-red-700 hidden">Error</p>
+            <div class="flex flex-row justify-between">
+                <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark" id="loginButton">Zaloguj</button>
+                <button class="bg-redbowl-light text-white p-3.5 rounded-lg text-center transition lg:duration-300 lg:hover:scale-110 hover:bg-redbowl-dark active:scale-95 lg:active:scale-95 active:bg-redbowl-dark" id="registerButton">Zarejestruj</button>
+            </div>
+        </div>
     </main>
 
     <script type="module" src="./main.js"></script>
