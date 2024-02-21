@@ -88,6 +88,26 @@ onAuthStateChanged(auth, (user) => {
             }
         });
 
+        //make instance object global
+        instance = typeahead({
+            input: inputField,
+            source: {
+                local: autocompleteItems,
+            },
+            highlight: true,
+            hint: false,
+            diacritics: true,
+            classNames : {
+                wrapper : 'bg-zinc-200 text-yellow-950 rounded-lg text-xl text-center w-full max-w-lg',
+            },
+            onSubmit: (e, selectedSuggestion) => {
+                const query = e.target.value;
+                pushToDatabase(query);
+                clearInputField(inputField);
+                inputField.blur();
+            }
+        });
+
         const userData = {
             lastLogin: Date.now()
         }
@@ -105,25 +125,6 @@ onAuthStateChanged(auth, (user) => {
         }
 
         console.log('Sesja wygasła. Zaloguj się ponownie lub zarejetruj.');
-    }
-});
-
-const instance = typeahead({
-    input: inputField,
-    source: {
-        local: autocompleteItems,
-    },
-    highlight: true,
-    hint: false,
-    diacritics: true,
-    classNames : {
-        wrapper : 'bg-zinc-200 text-yellow-950 rounded-lg text-xl text-center w-full max-w-lg',
-    },
-    onSubmit: (e, selectedSuggestion) => {
-        const query = e.target.value;
-        pushToDatabase(query);
-        clearInputField(inputField);
-        inputField.blur();
     }
 });
 
