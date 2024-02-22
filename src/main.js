@@ -23,6 +23,7 @@ const shoppingContainer = document.querySelector('.shopping-container--js');
 const loginContainer = document.querySelector('.login-container--js');
 
 const autocompleteItems = [];
+let instance = null;
 
 //auth code functions below
 
@@ -84,7 +85,7 @@ onAuthStateChanged(auth, (user) => {
             }
         });
 
-        //make instance object global
+        //make instance object global: (instance = ...) - working on localhost but not on netlify :(
         instance = typeahead({
             input: inputField,
             source: {
