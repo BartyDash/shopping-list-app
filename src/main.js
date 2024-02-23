@@ -85,6 +85,9 @@ onAuthStateChanged(auth, (user) => {
             }
         });
 
+        if (instance != null) {
+            instance.reset(true);
+        }
         //make instance object global: (instance = ...) - working on localhost but not on netlify :(
         instance = typeahead({
             input: inputField,
@@ -111,7 +114,6 @@ onAuthStateChanged(auth, (user) => {
         updateUserData(user, userData);
 
     } else {
-        instance.reset(true);
         autocompleteItems = [];
         clearInputField(inputField);
 
