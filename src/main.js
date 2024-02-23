@@ -22,7 +22,7 @@ const shoppingList = document.querySelector('.shopping-list--js');
 const shoppingContainer = document.querySelector('.shopping-container--js');
 const loginContainer = document.querySelector('.login-container--js');
 
-const autocompleteItems = [];
+let autocompleteItems = [];
 let instance = null;
 
 //auth code functions below
@@ -111,6 +111,10 @@ onAuthStateChanged(auth, (user) => {
         updateUserData(user, userData);
 
     } else {
+        instance.reset(true);
+        autocompleteItems = [];
+        clearInputField(inputField);
+
         if(shoppingContainer.classList.contains('hidden') == false) {
             shoppingContainer.classList.add('hidden');
         }
