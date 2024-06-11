@@ -19,7 +19,7 @@
     "tailwindcss": "^3.4.1"
   },
   "dependencies": {
-    "firebase": "^10.7.2",
+    "firebase": "^10.12.0",
     "typeahead-standalone": "^4.23.0"
   }
 }
